@@ -57,7 +57,7 @@ to quickly create a Cobra application.`,
 			return err
 		}
 
-		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, label)
+		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, label, configFlags)
 
 		return nil
 	},

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"io"
 	"maps"
 	"slices"
@@ -13,6 +14,11 @@ import (
 )
 
 func PrintTopologies(topologies map[string]*cmd.Toplogy, writer io.Writer) {
+	if len(topologies) == 0 {
+		fmt.Fprintln(writer, "No resources found")
+		return
+	}
+
 	colNames := append([]string{"Resource"}, slices.Sorted(maps.Keys(topologies))...)
 	cols := make([]metav1.TableColumnDefinition, 0, len(colNames))
 	rows := make([]metav1.TableRow, 0)

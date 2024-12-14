@@ -16,10 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/TalShafir/topology-viewer/pkg/util"
 	"github.com/spf13/cobra"
 )
+
+var labelSelector string
 
 // podCmd represents the pod command
 var podCmd = &cobra.Command{
@@ -32,8 +33,15 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("pod called")
+	RunE: func(cmd *cobra.Command, args []string) error {
+		toplogies, err := topologyViewerOptions.Pods(cmd.Context(), labelSelector)
+		if err != nil {
+			return err
+		}
+
+		util.PrintTopologies(toplogies, topologyViewerOptions.Out)
+
+		return nil
 	},
 }
 
@@ -49,4 +57,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// podCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	podCmd.Flags().StringVarP(&labelSelector, "selector", "l", "", `Selector (label query) to filter on, supports '=', '==', and '!='.(e.g. -l key1=value1,key2=value2). Matching
+        pods must satisfy all of the specified label constraints.`)
 }
