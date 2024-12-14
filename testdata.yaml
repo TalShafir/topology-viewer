@@ -161,6 +161,7 @@ status:
     cpu: 4
     memory: 8192Mi
     pods: 110
+    nvidia.com/gpu: 2
   capacity:
     cpu: 4
     memory: 8192Mi

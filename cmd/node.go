@@ -16,8 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/TalShafir/topology-viewer/pkg/util"
 	"github.com/spf13/cobra"
 )
 
@@ -25,20 +24,17 @@ import (
 var nodeCmd = &cobra.Command{
 	Use:     "node",
 	Aliases: []string{"nodes"},
-	Short:   "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short:   "Shows nodes spread accross topologies",
+	Long: `Shows nodes spread accross topologies, including count and any other allocatable resources of the nodes.
+			Usage: 
+	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		toplogies, err := topologyViewerOptions.Nodes(cmd.Context())
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(toplogies)
+		util.PrintTopologies(toplogies, topologyViewerOptions.Out)
 
 		return nil
 	},
