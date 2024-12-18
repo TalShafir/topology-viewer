@@ -17,9 +17,10 @@ type (
 	TopologyViewerOptions struct {
 		genericiooptions.IOStreams
 
-		configFlags *genericclioptions.ConfigFlags
-		client      kubernetes.Interface
-		label       string
+		configFlags   *genericclioptions.ConfigFlags
+		client        kubernetes.Interface
+		label         string
+		allNamespaces bool
 	}
 
 	Toplogy struct {
@@ -33,12 +34,14 @@ func NewTopologyViewerOptions(
 	client kubernetes.Interface,
 	streams genericiooptions.IOStreams, label string,
 	configFlags *genericclioptions.ConfigFlags,
+	allNamespaces bool,
 ) *TopologyViewerOptions {
 	return &TopologyViewerOptions{
-		client:      client,
-		IOStreams:   streams,
-		label:       label,
-		configFlags: configFlags,
+		client:        client,
+		IOStreams:     streams,
+		label:         label,
+		configFlags:   configFlags,
+		allNamespaces: allNamespaces,
 	}
 }
 
@@ -207,9 +210,13 @@ func (t *TopologyViewerOptions) loadPodsAndNodesToTopology(ctx context.Context, 
 }
 
 func (t *TopologyViewerOptions) Namespace() string {
-	ns := ""
-	if t.configFlags.Namespace != nil {
-		ns = *t.configFlags.Namespace
+	ns, _, err := t.configFlags.ToRawKubeConfigLoader().Namespace()
+	if err != nil {
+		panic(err)
+	}
+
+	if t.allNamespaces {
+		ns = "" // all namespaces
 	}
 
 	return ns

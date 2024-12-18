@@ -19,17 +19,18 @@ import (
 	"os"
 
 	"github.com/TalShafir/topology-viewer/pkg/cmd"
+	"github.com/TalShafir/topology-viewer/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/genericiooptions"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
 var (
-	label string
+	label         string
+	allNamespaces bool
 
 	topologyViewerOptions *cmd.TopologyViewerOptions
 
@@ -39,15 +40,15 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "topology-viewer",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Shows the topology of the cluster accross domains",
+	Long: `This plugin shows how the cluster is spread accross different domains.
+A domain is a different values of a node label (e.g different values of 'topology.kubernetes.io/zone').
+You can view how the nodes themselves are spread accross the topologies or pods with optional label selector.`,
+	Annotations: map[string]string{
+		cobra.CommandDisplayNameAnnotation: util.PrefixWithKubectl("topology-viewer"),
+	},
 	PersistentPreRunE: func(command *cobra.Command, args []string) error {
-		clientConfig, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(clientcmd.NewDefaultClientConfigLoadingRules(), nil).ClientConfig()
+		clientConfig, err := configFlags.ToRESTConfig()
 		if err != nil {
 			return err
 		}
@@ -57,7 +58,7 @@ to quickly create a Cobra application.`,
 			return err
 		}
 
-		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, label, configFlags)
+		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, label, configFlags, allNamespaces)
 
 		return nil
 	},
@@ -81,6 +82,8 @@ func init() {
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.topology-viewer.yaml)")
 	rootCmd.PersistentFlags().StringVar(&label, "label", "topology.kubernetes.io/zone", "toplogy label to use")
+	rootCmd.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", false, `If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even
+	if specified with --namespace.`)
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

@@ -26,13 +26,11 @@ var labelSelector string
 var podCmd = &cobra.Command{
 	Use:     "pod",
 	Aliases: []string{"pods"},
-	Short:   "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short:   "Shows how the pods are spread accross topologies",
+	Long: `Shows how pods are spread accross topologies, including count and any other allocatable resources of the pods.
+'-' means that the resource wasn't present on any of the pods in the domain.
+If no label selector was provided all pods will be shown.
+A pod is considered to be part of a domain according to the value of the label on the node its running on.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		toplogies, err := topologyViewerOptions.Pods(cmd.Context(), labelSelector)
 		if err != nil {

@@ -24,10 +24,10 @@ import (
 var nodeCmd = &cobra.Command{
 	Use:     "node",
 	Aliases: []string{"nodes"},
-	Short:   "Shows nodes spread accross topologies",
-	Long: `Shows nodes spread accross topologies, including count and any other allocatable resources of the nodes.
-			Usage: 
-	`,
+	Short:   "Shows how the nodes are spread accross topologies",
+	Long: `Shows how the nodes spread accross topologies, including count and any other allocatable resources of the nodes.
+The output includes the node count and all allocatable resources of the nodes
+'-' means that the resource wasn't present on any of the nodes in the domain`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		toplogies, err := topologyViewerOptions.Nodes(cmd.Context())
 		if err != nil {
