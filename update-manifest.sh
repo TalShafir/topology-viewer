@@ -1,7 +1,5 @@
 #!/bin/bash
 
-TAG=v0.0.1
-
 jq '[.[] | select(.type=="Archive") | 
 {
     bin: .extra.Binaries[0],
