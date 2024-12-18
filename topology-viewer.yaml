@@ -1,0 +1,69 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: topology-viewer
+spec:
+  version: v0.0.1
+  homepage: https://github.com/TalShafir/topology-viewer
+  shortDescription: Shows the topology of the cluster accross domains
+  description: |-
+    This plugin shows how the cluster is spread accross different domains.
+    A domain is a different values of a node label (e.g different values of 'topology.kubernetes.io/zone').
+    You can view how the nodes themselves are spread accross the topologies or pods with optional label selector.
+  platforms:
+    - bin: topology-viewer.exe
+      sha256: bd2ddafce1f07e6ae824560b62fa1e4eff5aa02065c6eb6334ffc0e5b746d9b5
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Windows_i386.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: "386"
+    - bin: topology-viewer
+      sha256: 724082251ddfe32b4b1e250518cdad45d07ba9bec49a5c95c7017582d785bc5b
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Linux_i386.tar.gz
+      selector:
+        matchLabels:
+          os: linux
+          arch: "386"
+    - bin: topology-viewer.exe
+      sha256: e24e7e2f9c38ffc0cd4490b65f96cb76295412a7829b1eacb1698d131fca883c
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Windows_arm64.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: arm64
+    - bin: topology-viewer
+      sha256: df5c20440f9984ba3bbc69a6700701445ee5582ecc84d61d2e2da74e799918d3
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Linux_arm64.tar.gz
+      selector:
+        matchLabels:
+          os: linux
+          arch: arm64
+    - bin: topology-viewer
+      sha256: 79a532ab9495735f3268fa70281710d416301c44d1878906a03ab90158e5b67a
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Darwin_arm64.tar.gz
+      selector:
+        matchLabels:
+          os: darwin
+          arch: arm64
+    - bin: topology-viewer
+      sha256: 79c17087667c7c3e2a10e62004e3f0aefda09edee08a492106140969cde374bd
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Linux_x86_64.tar.gz
+      selector:
+        matchLabels:
+          os: linux
+          arch: amd64
+    - bin: topology-viewer.exe
+      sha256: f57d2789354329bca4c0c7dc809f211f6c4366bafd7b266d4defd0de59e52908
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Windows_x86_64.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: amd64
+    - bin: topology-viewer
+      sha256: ce69af2a9670a0ad003d684946b16c228425e75ac8aa2e3d0bd6b05cdfa9f76f
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.1/topology-viewer_Darwin_x86_64.tar.gz
+      selector:
+        matchLabels:
+          os: darwin
+          arch: amd64
