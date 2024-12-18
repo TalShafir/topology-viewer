@@ -24,6 +24,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
+
+    - name: Install yq
+      uses: mikefarah/yq@v4.44.6
+    - name: Install jq
+      uses: dcarbone/install-jq-action@v3.0.1
+
     - name: Update Krew manifest
       run: bash update-manifest.sh
       env:
