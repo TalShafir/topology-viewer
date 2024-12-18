@@ -46,4 +46,6 @@ jobs:
       with:
         commit_message: Update Krew manifest ${{ github.ref_name }}
         file_pattern: 'topology-viewer.yaml'
+        branch: master
+        create_branch: false
 
