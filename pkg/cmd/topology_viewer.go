@@ -11,6 +11,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/cli-runtime/pkg/genericiooptions"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/klog/v2"
 )
 
 type (
@@ -19,7 +20,7 @@ type (
 
 		configFlags   *genericclioptions.ConfigFlags
 		client        kubernetes.Interface
-		label         string
+		topologyKey   string
 		allNamespaces bool
 	}
 
@@ -32,14 +33,15 @@ type (
 // NewTopologyViewerOptions provides an instance of NewTopologyViewerOptions with default values
 func NewTopologyViewerOptions(
 	client kubernetes.Interface,
-	streams genericiooptions.IOStreams, label string,
+	streams genericiooptions.IOStreams,
+	topologyKey string,
 	configFlags *genericclioptions.ConfigFlags,
 	allNamespaces bool,
 ) *TopologyViewerOptions {
 	return &TopologyViewerOptions{
 		client:        client,
 		IOStreams:     streams,
-		label:         label,
+		topologyKey:   topologyKey,
 		configFlags:   configFlags,
 		allNamespaces: allNamespaces,
 	}
@@ -67,6 +69,8 @@ func mergeResources(sum corev1.ResourceList, adds ...corev1.ResourceList) {
 }
 
 func (t *TopologyViewerOptions) Nodes(ctx context.Context) (map[string]*Toplogy, error) {
+	klog.V(2).InfoS("loading nodes")
+
 	nodesList, err := t.client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
@@ -74,22 +78,34 @@ func (t *TopologyViewerOptions) Nodes(ctx context.Context) (map[string]*Toplogy,
 
 	nodes := nodesList.Items
 
+	klog.V(2).InfoS("loaded nodes", "count", len(nodes))
+
 	topologies := make(map[string]*Toplogy, 0)
 
 	for _, node := range nodes {
-		topology, exists := node.GetLabels()[t.label]
+		klog.V(4).InfoS("handling node", "node", node.Name)
+
+		topology, exists := node.GetLabels()[t.topologyKey]
 		if !exists {
 			topology = "-"
 		}
 
+		klog.V(4).InfoS("found node topology", "node", node.Name, "topologyName", topology)
+
 		t, exists := topologies[topology]
 		if !exists {
+			klog.V(4).InfoS("topology doesn't exist creating it", "node", node.Name, "topologyName", topology)
+
 			t = newTopology()
 			topologies[topology] = t
 		}
 
+		klog.V(4).InfoS("adding node to topology", "node", node.Name, "nodeAllocatable", node.Status.Allocatable, "topologyName", topology, "topology", t)
+
 		t.Count++
 		mergeResources(t.Resources, node.Status.Allocatable)
+
+		klog.V(4).InfoS("added node to topology", "node", node.Name, "topologyName", topology, "topology", t)
 	}
 
 	return topologies, nil
@@ -115,17 +131,22 @@ func (t *TopologyViewerOptions) Pods(ctx context.Context, labelSelector string) 
 		}
 
 		// skip pods without node name
-		if pod.Spec.NodeName == "" {
+		nodeName := pod.Spec.NodeName
+		if nodeName == "" {
 			continue
 		}
 
 		topology := "-"
-		if t, exist := nodeNameToTopology[pod.Spec.NodeName]; exist {
+		if t, exist := nodeNameToTopology[nodeName]; exist {
 			topology = t
 		}
 
+		klog.V(4).InfoS("found pod topology", "pod", klog.KObj(&pod), "node", nodeName, "topologyName", topology)
+
 		t, exists := topologies[topology]
 		if !exists {
+			klog.V(4).InfoS("topology doesn't exist creating it", "pod", klog.KObj(&pod), "node", nodeName, "topologyName", topology)
+
 			t = newTopology()
 			topologies[topology] = t
 		}
@@ -137,7 +158,11 @@ func (t *TopologyViewerOptions) Pods(ctx context.Context, labelSelector string) 
 			podResources = append(podResources, c.Resources.Requests)
 		}
 
+		klog.V(4).InfoS("adding node to topology", "node", nodeName, "topologyName", topology, "podResources", podResources, "topology", t)
+
 		mergeResources(t.Resources, podResources...)
+
+		klog.V(4).InfoS("added node to topology", "node", nodeName, "topologyName", topology, "topology", t)
 	}
 
 	return topologies, nil
@@ -154,6 +179,8 @@ func (t *TopologyViewerOptions) loadPodsAndNodesToTopology(ctx context.Context, 
 
 	wg.Add(2)
 
+	klog.V(2).InfoS("loading pods and nodes")
+
 	go func() {
 		defer wg.Done()
 
@@ -162,17 +189,25 @@ func (t *TopologyViewerOptions) loadPodsAndNodesToTopology(ctx context.Context, 
 			opts.LabelSelector = labelSelector
 		}
 
-		podsList, err := t.client.CoreV1().Pods(t.Namespace()).List(ctx, opts)
+		ns := t.Namespace()
+
+		klog.V(2).InfoS("loading pods", "labelSelector", labelSelector, "namespace", ns)
+
+		podsList, err := t.client.CoreV1().Pods(ns).List(ctx, opts)
 		if err != nil {
 			errC <- err
 			return
 		}
 
 		pods = podsList.Items
+
+		klog.V(2).InfoS("loaded pods", "labelSelector", labelSelector, "namespace", ns, "count", len(pods))
 	}()
 
 	go func() {
 		defer wg.Done()
+
+		klog.V(2).InfoS("loading nodes")
 
 		nodesList, err := t.client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 		if err != nil {
@@ -180,16 +215,24 @@ func (t *TopologyViewerOptions) loadPodsAndNodesToTopology(ctx context.Context, 
 			return
 		}
 
+		klog.V(2).InfoS("loaded nodes", "count", len(nodesList.Items))
+
 		nodeNameToTopology = make(map[string]string, len(nodesList.Items))
 
+		klog.V(2).InfoS("building node to topology mapping")
 		for _, node := range nodesList.Items {
 			nodeTopology := "-"
-			if t, exist := node.GetLabels()[t.label]; exist {
+			if t, exist := node.GetLabels()[t.topologyKey]; exist {
 				nodeTopology = t
 			}
 
+			klog.V(4).InfoS("add node to topology", "node", node.Name, "topology", nodeTopology)
+
 			nodeNameToTopology[node.Name] = nodeTopology
 		}
+
+		klog.V(2).InfoS("built node to topology mapping")
+		klog.V(4).InfoS("built node to topology mapping", "mapping", nodeNameToTopology)
 	}()
 
 	wg.Wait()
