@@ -31,7 +31,7 @@ import (
 )
 
 var (
-	label         string
+	topologyKey   string
 	allNamespaces bool
 
 	topologyViewerOptions *cmd.TopologyViewerOptions
@@ -60,7 +60,7 @@ You can view how the nodes themselves are spread accross the topologies or pods 
 			return err
 		}
 
-		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, label, configFlags, allNamespaces)
+		topologyViewerOptions = cmd.NewTopologyViewerOptions(client, genericiooptions.IOStreams{In: os.Stdin, Out: os.Stdout, ErrOut: os.Stderr}, topologyKey, configFlags, allNamespaces)
 
 		return nil
 	},
@@ -83,7 +83,7 @@ func init() {
 	// will be global for your application.
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.topology-viewer.yaml)")
-	rootCmd.PersistentFlags().StringVar(&label, "label", "topology.kubernetes.io/zone", "toplogy label to use")
+	rootCmd.PersistentFlags().StringVar(&topologyKey, "topology-key", "topology.kubernetes.io/zone", "toplogyKey label to use")
 	rootCmd.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", false, `If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even
 	if specified with --namespace.`)
 
