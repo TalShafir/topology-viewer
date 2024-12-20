@@ -11,5 +11,5 @@ jq '[.[] | select(.type=="Archive") |
             arch: .goarch
         }
     }
-}]' dist/artifacts.json | yq -P -o yaml - | \
+}] | sort_by(.uri)' dist/artifacts.json | yq -P -o yaml - | \
 yq ea -i "select(fileIndex == 0).spec.platforms *= select(fileIndex == 1) | select(fileIndex == 0) | .spec.version=\"$TAG\"" topology-viewer.yaml -
