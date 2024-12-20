@@ -3,7 +3,7 @@ kind: Plugin
 metadata:
   name: topology-viewer
 spec:
-  version: v0.0.6
+  version: v0.0.7
   homepage: https://github.com/TalShafir/topology-viewer
   shortDescription: Shows the topology of the cluster accross domains
   description: |-
@@ -11,59 +11,59 @@ spec:
     A domain is a different values of a node label (e.g different values of 'topology.kubernetes.io/zone').
     You can view how the nodes themselves are spread accross the topologies or pods with optional label selector.
   platforms:
-    - bin: topology-viewer.exe
-      sha256: 53ac9ccf927c825f66f1ff79f4956dbb05c2946811575c5741be026178fc6b40
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Windows_i386.zip
-      selector:
-        matchLabels:
-          os: windows
-          arch: "386"
-    - bin: topology-viewer.exe
-      sha256: fc987a60a2f75f0417ea1194628501635ffaa1cd85f9b13edeb0540082702c96
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Windows_arm64.zip
-      selector:
-        matchLabels:
-          os: windows
-          arch: arm64
     - bin: topology-viewer
-      sha256: db99dd16e0f6412dfbf5f73c4148e8640d458e5917998421acb343f901e49136
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Linux_x86_64.tar.gz
-      selector:
-        matchLabels:
-          os: linux
-          arch: amd64
-    - bin: topology-viewer.exe
-      sha256: 868e1070832fa2b1a46c1c2acaf6adfef175b6d7eb129bc7a0210dd9f49cbb02
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Windows_x86_64.zip
-      selector:
-        matchLabels:
-          os: windows
-          arch: amd64
-    - bin: topology-viewer
-      sha256: ae8eee1c5ae5a2a4744b9be4a21aa760895b1ba6621630b69e9aac37de0117a4
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Darwin_arm64.tar.gz
+      sha256: 2bfcf398d02e0ccfed21ba08209f76bde2595771d329b1467cdd2bca00af4084
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Darwin_arm64.tar.gz
       selector:
         matchLabels:
           os: darwin
           arch: arm64
     - bin: topology-viewer
-      sha256: 7b8f929bf22d884924ef3a319d1a4741d20498b628e424182c37860dca716b02
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Linux_i386.tar.gz
-      selector:
-        matchLabels:
-          os: linux
-          arch: "386"
-    - bin: topology-viewer
-      sha256: a5f54c394dcc741dc9eb5001ffab46cde8c7316929e8e5fdae4296cf084af1f2
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Darwin_x86_64.tar.gz
+      sha256: 14e5d9050b01b6bfbf13b6275937f996e7eacce823facc88f2854abf9b68c3d1
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Darwin_x86_64.tar.gz
       selector:
         matchLabels:
           os: darwin
           arch: amd64
     - bin: topology-viewer
-      sha256: 250232e2219834e0ad4c6f35718d2cd7ef145ad615600041568442854cd85fcd
-      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.6/topology-viewer_Linux_arm64.tar.gz
+      sha256: 3a5e4aaf44d8ca93f5626a5818b7e445f82ab03e2a1a6363147a897f1a19c374
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Linux_arm64.tar.gz
       selector:
         matchLabels:
           os: linux
           arch: arm64
+    - bin: topology-viewer
+      sha256: 38892a5653f518174863c7675a3494601e4c240cd5e99a4490a00d68d0e35856
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Linux_i386.tar.gz
+      selector:
+        matchLabels:
+          os: linux
+          arch: "386"
+    - bin: topology-viewer
+      sha256: d583cfc1af62a5904d9d3c56c70bf18c845d3657d94ba41409b46cbc458d4169
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Linux_x86_64.tar.gz
+      selector:
+        matchLabels:
+          os: linux
+          arch: amd64
+    - bin: topology-viewer.exe
+      sha256: fff92df8145152aeb65718f99230848c0132674b6595de8c7a35b7b0e3f362ef
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Windows_arm64.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: arm64
+    - bin: topology-viewer.exe
+      sha256: 21dbe223b601919aeb0690b566a33cd601ecf4e6a8f54949d5dc2b3021ae0947
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Windows_i386.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: "386"
+    - bin: topology-viewer.exe
+      sha256: 5b32179889ae9933df029d5dbafc190bd5ea4de3ed3cf84dc67e9eed1281f662
+      uri: https://github.com/TalShafir/topology-viewer/releases/download/v0.0.7/topology-viewer_Windows_x86_64.zip
+      selector:
+        matchLabels:
+          os: windows
+          arch: amd64
