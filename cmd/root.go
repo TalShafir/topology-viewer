@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"flag"
 	"os"
 
 	"github.com/TalShafir/topology-viewer/pkg/cmd"
@@ -26,6 +27,7 @@ import (
 	"k8s.io/cli-runtime/pkg/genericiooptions"
 	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	"k8s.io/klog/v2"
 )
 
 var (
@@ -84,6 +86,11 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&label, "label", "topology.kubernetes.io/zone", "toplogy label to use")
 	rootCmd.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", false, `If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even
 	if specified with --namespace.`)
+
+	// klog flags
+	fs := flag.NewFlagSet("", flag.PanicOnError)
+	klog.InitFlags(fs)
+	rootCmd.PersistentFlags().AddGoFlagSet(fs)
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
