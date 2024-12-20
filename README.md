@@ -31,11 +31,11 @@ Kubectl Krew plugin to view how the cluster is spread accross topologies
     ```
 - View nodes and use different topology key (how the cluster is spread by arch)
     ```bash
-    kubectl topology-viewer nodes --topology-key kubernetes.io/arch
+    topology-viewer nodes --topology-key kubernetes.io/arch
     ```
 - View pods and use different topology key (how the cluster is spread by arch)
     ```bash
-    kubectl topology-viewer pods -A -l key1=value1,key2=value2 --topology-key kubernetes.io/arch
+    topology-viewer pods -A -l key1=value1,key2=value2 --topology-key kubernetes.io/arch
     ```
 
 ## Installation
