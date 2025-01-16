@@ -13,7 +13,7 @@ import (
 	"k8s.io/cli-runtime/pkg/printers"
 )
 
-func PrintTopologies(topologies map[string]*cmd.Toplogy, writer io.Writer) {
+func PrintTopologies(topologies map[string]*cmd.Toplogy, writer io.Writer, includeMembers bool) {
 	if len(topologies) == 0 {
 		fmt.Fprintln(writer, "No resources found")
 		return
@@ -29,6 +29,10 @@ func PrintTopologies(topologies map[string]*cmd.Toplogy, writer io.Writer) {
 
 	rows = append(rows, buildCountRow(topologies, colNames))
 	rows = append(rows, buildResourcesRows(topologies, colNames)...)
+
+	if includeMembers {
+		rows = append(rows, buildMembersRow(topologies, colNames))
+	}
 
 	table := &metav1.Table{
 		ColumnDefinitions: cols,
@@ -95,4 +99,19 @@ func extractResourceNames(topologies map[string]*cmd.Toplogy) []string {
 	slices.Sort(resources)
 
 	return resources
+}
+
+func buildMembersRow(topologies map[string]*cmd.Toplogy, colNames []string) metav1.TableRow {
+	cells := make([]interface{}, 0, len(colNames))
+	cells = append(cells, "members")
+
+	for _, k := range colNames[1:] {
+		cells = append(cells, topologies[k].Members)
+	}
+
+	row := metav1.TableRow{
+		Cells: cells,
+	}
+
+	return row
 }

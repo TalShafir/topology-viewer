@@ -37,7 +37,7 @@ A pod is considered to be part of a domain according to the value of the label o
 			return err
 		}
 
-		util.PrintTopologies(toplogies, topologyViewerOptions.Out)
+		util.PrintTopologies(toplogies, topologyViewerOptions.Out, includeMembers)
 
 		return nil
 	},

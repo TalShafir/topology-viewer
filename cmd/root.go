@@ -31,8 +31,9 @@ import (
 )
 
 var (
-	topologyKey   string
-	allNamespaces bool
+	topologyKey    string
+	allNamespaces  bool
+	includeMembers bool
 
 	topologyViewerOptions *cmd.TopologyViewerOptions
 
@@ -86,6 +87,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&topologyKey, "topology-key", "topology.kubernetes.io/zone", "toplogyKey label to use")
 	rootCmd.PersistentFlags().BoolVarP(&allNamespaces, "all-namespaces", "A", false, `If present, list the requested object(s) across all namespaces. Namespace in current context is ignored even
 	if specified with --namespace.`)
+	rootCmd.PersistentFlags().BoolVarP(&includeMembers, "include-members", "d", false, `If present, print the members of each topology group - can be long and break formatting.`)
 
 	// klog flags
 	fs := flag.NewFlagSet("", flag.PanicOnError)

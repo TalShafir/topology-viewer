@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 	"sync"
 
 	corev1 "k8s.io/api/core/v1"
@@ -27,8 +28,25 @@ type (
 	Toplogy struct {
 		Count     int                 `json:"count,omitempty"`
 		Resources corev1.ResourceList `json:"resources,omitempty"`
+		Members   []string
 	}
 )
+
+func (t *Toplogy) AddNode(node *corev1.Node) {
+	t.Count++
+	mergeResources(t.Resources, node.Status.Allocatable)
+	t.Members = append(t.Members, node.Name)
+}
+
+func (t *Toplogy) AddPod(pod *corev1.Pod) {
+	t.Count++
+
+	for _, c := range pod.Spec.Containers {
+		mergeResources(t.Resources, c.Resources.Requests)
+	}
+
+	t.Members = append(t.Members, fmt.Sprintf("%s/%s (%s)", pod.Namespace, pod.Name, pod.Spec.NodeName))
+}
 
 // NewTopologyViewerOptions provides an instance of NewTopologyViewerOptions with default values
 func NewTopologyViewerOptions(
@@ -102,8 +120,7 @@ func (t *TopologyViewerOptions) Nodes(ctx context.Context) (map[string]*Toplogy,
 
 		klog.V(4).InfoS("adding node to topology", "node", node.Name, "nodeAllocatable", node.Status.Allocatable, "topologyName", topology, "topology", t)
 
-		t.Count++
-		mergeResources(t.Resources, node.Status.Allocatable)
+		t.AddNode(&node)
 
 		klog.V(4).InfoS("added node to topology", "node", node.Name, "topologyName", topology, "topology", t)
 	}
@@ -151,16 +168,7 @@ func (t *TopologyViewerOptions) Pods(ctx context.Context, labelSelector string) 
 			topologies[topology] = t
 		}
 
-		t.Count++
-
-		podResources := make([]corev1.ResourceList, 0, len(pod.Spec.Containers))
-		for _, c := range pod.Spec.Containers {
-			podResources = append(podResources, c.Resources.Requests)
-		}
-
-		klog.V(4).InfoS("adding node to topology", "node", nodeName, "topologyName", topology, "podResources", podResources, "topology", t)
-
-		mergeResources(t.Resources, podResources...)
+		t.AddPod(&pod)
 
 		klog.V(4).InfoS("added node to topology", "node", nodeName, "topologyName", topology, "topology", t)
 	}

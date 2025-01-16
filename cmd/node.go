@@ -34,7 +34,7 @@ The output includes the node count and all allocatable resources of the nodes
 			return err
 		}
 
-		util.PrintTopologies(toplogies, topologyViewerOptions.Out)
+		util.PrintTopologies(toplogies, topologyViewerOptions.Out, includeMembers)
 
 		return nil
 	},
